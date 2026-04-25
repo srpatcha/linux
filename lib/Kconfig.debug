@@ -2338,6 +2338,17 @@ config TEST_LIST_SORT
 
 	  If unsure, say N.
 
+config LIST_SORT_KUNIT_TEST
+	tristate "Extended list_sort() KUnit test suite" if !KUNIT_ALL_TESTS
+	depends on KUNIT
+	default KUNIT_ALL_TESTS
+	help
+	  Extended KUnit tests for 'list_sort()' covering edge cases such as
+	  empty lists, single elements, stability, reverse-sorted input,
+	  large lists, and various comparison function behaviors.
+
+	  If unsure, say N.
+
 config TEST_SORT
 	tristate "Array-based sort test" if !KUNIT_ALL_TESTS
 	depends on KUNIT
