@@ -55,7 +55,7 @@ static int nfcmrvl_nci_send(struct nci_dev *ndev, struct sk_buff *skb)
 
 	if (priv->config.hci_muxed) {
 		unsigned char *hdr;
-		unsigned char len = skb->len;
+		unsigned int len = skb->len;
 
 		hdr = skb_push(skb, NFCMRVL_HCI_EVENT_HEADER_SIZE);
 		hdr[0] = NFCMRVL_HCI_COMMAND_CODE;
@@ -194,6 +194,10 @@ EXPORT_SYMBOL_GPL(nfcmrvl_nci_unregister_dev);
 int nfcmrvl_nci_recv_frame(struct nfcmrvl_private *priv, struct sk_buff *skb)
 {
 	if (priv->config.hci_muxed) {
+		if (skb->len < NFCMRVL_HCI_EVENT_HEADER_SIZE) {
+			kfree_skb(skb);
+			return 0;
+		}
 		if (skb->data[0] == NFCMRVL_HCI_EVENT_CODE &&
 		    skb->data[1] == NFCMRVL_HCI_NFC_EVENT_CODE) {
 			/* Data packet, let's extract NCI payload */
